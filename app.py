@@ -12,8 +12,13 @@ FUTURE_SYMBOL = "BTCUSD_240628"  # Ajuste conforme o contrato trimestral vigente
 def get_price(symbol, is_futures=False):
     url = "https://fapi.binance.com/fapi/v1/ticker/price" if is_futures else "https://api.binance.com/api/v3/ticker/price"
     response = requests.get(url, params={"symbol": symbol})
-    return float(response.json()['price'])
-
+    data = response.json()
+    
+    if 'price' in data:
+        return float(data['price'])
+    else:
+        st.error(f"Erro ao buscar preço para {symbol}: {data}")
+        st.stop()
 def get_funding(symbol):
     url = "https://fapi.binance.com/fapi/v1/fundingRate"
     params = {"symbol": symbol, "limit": 8}  # últimos 8 períodos = 24h
